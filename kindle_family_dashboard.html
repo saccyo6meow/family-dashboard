@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<title>わが家のデイリーボード</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: #fff; color: #222;
+    font-family: Arial, "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+  }
+  .page { max-width: 1100px; margin: 0 auto; padding: 22px; }
+  header { display:flex; justify-content:space-between; align-items:flex-end; gap:16px; border-bottom:2px solid #222; padding-bottom:14px; }
+  .eyebrow { font-size:15px; letter-spacing:.14em; }
+  h1 { font-size:25px; margin:7px 0 0; font-weight:600; }
+  .date { text-align:right; font-size:18px; line-height:1.6; }
+  .clock-area { text-align:center; padding:22px 0 18px; }
+  .clock-label { font-size:16px; letter-spacing:.2em; }
+  #clock { font-size:clamp(54px, 10vw, 100px); font-weight:300; letter-spacing:.04em; line-height:1.15; margin-top:6px; }
+  .cards { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .card { border:1.5px solid #333; border-radius:14px; padding:18px; min-height:165px; }
+  .card .label { font-size:19px; }
+  .card .time { font-size:clamp(28px, 5vw, 46px); font-weight:600; margin:12px 0 5px; }
+  .card .sub { font-size:15px; color:#444; }
+  .note { margin-top:18px; padding:12px 15px; border-left:5px solid #777; background:#f3f3f3; font-size:16px; line-height:1.6; }
+  footer { text-align:center; font-size:13px; color:#555; margin-top:16px; }
+  @media (max-width:520px) {
+    .page { padding:14px; } header { align-items:flex-start; }
+    h1 { font-size:20px; } .date { font-size:15px; }
+    .cards { gap:10px; } .card { padding:13px; min-height:145px; }
+    .card .label { font-size:16px; } .card .sub { font-size:13px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <div>
+      <div class="eyebrow">FAMILY DAILY BOARD</div>
+      <h1>きょうの暮らし</h1>
+    </div>
+    <div class="date"><div id="date"></div><div id="weekday"></div></div>
+  </header>
+
+  <section class="clock-area">
+    <div class="clock-label">いまの時間</div>
+    <div id="clock">--:--</div>
+  </section>
+
+  <section class="cards">
+    <div class="card">
+      <div class="label">🍽　夕飯まで</div>
+      <div class="time" id="dinner">--</div>
+      <div class="sub">夕飯　17:15</div>
+    </div>
+    <div class="card">
+      <div class="label">🌙　ねるまで</div>
+      <div class="time" id="bedtime">--</div>
+      <div class="sub">就寝　19:00</div>
+    </div>
+  </section>
+
+  <div class="note" id="message">今日も、あわてずひとつずつ。</div>
+  <footer>使うときにページを開いてね</footer>
+</div>
+<script>
+(function () {
+  function pad(n) { return n < 10 ? "0" + n : "" + n; }
+  function countdown(targetHour, targetMinute) {
+    var now = new Date();
+    var target = new Date(now.getFullYear(), now.getMonth(), now.getDate(), targetHour, targetMinute, 0);
+    var diff = target.getTime() - now.getTime();
+    if (diff <= 0) return "時間だよ！";
+    var totalMinutes = Math.ceil(diff / 60000);
+    var hours = Math.floor(totalMinutes / 60);
+    var minutes = totalMinutes % 60;
+    if (hours > 0) return hours + "時間 " + minutes + "分";
+    return totalMinutes + "分";
+  }
+  function update() {
+    var now = new Date();
+    var days = ["日曜日","月曜日","火曜日","水曜日","木曜日","金曜日","土曜日"];
+    document.getElementById("clock").innerHTML = pad(now.getHours()) + ":" + pad(now.getMinutes());
+    document.getElementById("date").innerHTML = now.getFullYear() + "年" + (now.getMonth()+1) + "月" + now.getDate() + "日";
+    document.getElementById("weekday").innerHTML = days[now.getDay()];
+    document.getElementById("dinner").innerHTML = countdown(17, 15);
+    document.getElementById("bedtime").innerHTML = countdown(19, 0);
+    var h = now.getHours();
+    var msg = "今日も、あわてずひとつずつ。";
+    if (h >= 17 && h < 19) msg = "夕飯のあとは、ゆっくり寝る準備。";
+    else if (h >= 19) msg = "おやすみの時間。今日もおつかれさま。";
+    else if (h >= 15) msg = "夕飯まで、あとひといき。";
+    document.getElementById("message").innerHTML = msg;
+  }
+  update();
+  setInterval(update, 30000);
+})();
+</script>
+</body>
+</html>
